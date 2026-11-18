@@ -1,5 +1,5 @@
 import type { MediaItem } from '@/lib/types';
-import { cld, videoPoster } from '@/lib/utils';
+import { cld, isOldCloudinary, posterOf } from '@/lib/utils';
 import AutoVideo from './AutoVideo';
 
 function hue(s: string) {
@@ -22,10 +22,10 @@ export function Placeholder({ title }: { title: string }) {
 type Props = { m: MediaItem | null; title: string; auto?: boolean; controls?: boolean; width?: number; eager?: boolean };
 
 export default function Media({ m, title, auto, controls, width = 1200, eager }: Props) {
-  if (!m) return <Placeholder title={title} />;
+  if (!m || isOldCloudinary(m.url)) return <Placeholder title={title} />;
   if (m.kind === 'video') {
-    if (auto) return <AutoVideo src={cld(m.url, 'video')} poster={videoPoster(m.url)} />;
-    return <video src={cld(m.url, 'video')} poster={videoPoster(m.url)} controls={controls} playsInline preload="metadata" />;
+    if (auto) return <AutoVideo src={cld(m.url, 'video')} poster={posterOf(m)} eager={eager} />;
+    return <video src={cld(m.url, 'video')} poster={posterOf(m)} controls={controls} playsInline preload={m.poster ? 'none' : 'metadata'} />;
   }
   // eslint-disable-next-line @next/next/no-img-element
   return <img src={cld(m.url, 'image', width)} alt={title} loading={eager ? 'eager' : 'lazy'} />;

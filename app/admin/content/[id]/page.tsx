@@ -6,7 +6,7 @@ import Uploader from '@/components/admin/Uploader';
 import { createClient } from '@/lib/supabase/client';
 import type { ContentType, Item, MediaItem } from '@/lib/types';
 import { TAGS, TYPES } from '@/lib/types';
-import { cld, slugify } from '@/lib/utils';
+import { cld, isOldCloudinary, slugify } from '@/lib/utils';
 import { refreshSite } from '../../actions';
 
 type Draft = Omit<Item, 'id' | 'slug'> & { id?: string; slug?: string };
@@ -105,7 +105,9 @@ export default function Editor({ params }: { params: Promise<{ id: string }> }) 
           <div className="thumbs">
             {d.media.map((m: MediaItem, k) => (
               <div className="t" key={m.url}>
-                {m.kind === 'video' ? <video src={cld(m.url, 'video')} muted /> : <img src={cld(m.url, 'image', 200)} alt="" />}
+                {isOldCloudinary(m.url) ? <span className="old">Old file — remove &amp; re-upload</span>
+                  : m.kind === 'video' ? (m.poster ? <img src={m.poster} alt="" /> : <video src={m.url} muted preload="metadata" />)
+                  : <img src={cld(m.url, 'image', 200)} alt="" />}
                 <button type="button" className="x" aria-label="Remove" onClick={() => set('media', d.media.filter((_, j) => j !== k))}>×</button>
                 {k > 0 && <button type="button" className="l" aria-label="Move earlier" onClick={() => move(k, -1)}>‹</button>}
               </div>

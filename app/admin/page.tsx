@@ -5,7 +5,7 @@ import AdminNav from '@/components/admin/AdminNav';
 import { createClient } from '@/lib/supabase/client';
 import type { Item } from '@/lib/types';
 import { TYPES } from '@/lib/types';
-import { fmtDate } from '@/lib/utils';
+import { fmtDate, isOldCloudinary } from '@/lib/utils';
 import { refreshSite } from './actions';
 
 export default function ContentList() {
@@ -46,7 +46,8 @@ export default function ContentList() {
             {items?.length === 0 && <tr><td colSpan={6}>No content yet. Add your first reel, shoot or collab.</td></tr>}
             {items?.map((i) => (
               <tr key={i.id}>
-                <td>{i.title}{i.trending ? ' 🔥' : ''}</td>
+                <td>{i.title}{i.trending ? ' 🔥' : ''}
+                  {(i.media.some((m) => isOldCloudinary(m.url)) || isOldCloudinary(i.brand_logo)) && <span className="status old">Re-upload media</span>}</td>
                 <td>{TYPES[i.type]}</td>
                 <td>{i.brand || '—'}</td>
                 <td>{fmtDate(i.published_at)}</td>

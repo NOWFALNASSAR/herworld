@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import type { Item } from '@/lib/types';
-import { cld } from '@/lib/utils';
+import { cld, isOldCloudinary } from '@/lib/utils';
 
 type Brand = { name: string; logo: string | null; items: Item[] };
 
@@ -35,7 +35,7 @@ export default function BrandWall({ items }: { items: Item[] }) {
           {brands.map((b) => (
             <button key={b.name} className="logo-cell" aria-pressed={open === b.name} onClick={() => setOpen(open === b.name ? null : b.name)}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {b.logo ? <img src={cld(b.logo, 'image', 400)} alt={b.name} /> : <span>{b.name}</span>}
+              {b.logo && !isOldCloudinary(b.logo) ? <img src={cld(b.logo, 'image', 400)} alt={b.name} /> : <span>{b.name}</span>}
             </button>
           ))}
         </div>

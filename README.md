@@ -2,7 +2,7 @@
 
 A mobile-first portfolio with a private admin panel. She posts reels, shoots, brand collabs and blog posts from her phone; the home page updates itself.
 
-**Stack:** Next.js 15 (App Router) · Supabase (database + login) · Cloudinary (photos/videos) · Vercel (hosting)
+**Stack:** Next.js 15 (App Router) · Supabase (database + login) · Cloudflare R2 (photos/videos) · Vercel (hosting)
 
 ---
 
@@ -27,13 +27,21 @@ A mobile-first portfolio with a private admin panel. She posts reels, shoots, br
 6. **Authentication → Sign In / Providers → Email**: turn **off** "Allow new users to sign up".
 7. **Project Settings → API**: copy the Project URL and anon key into `.env.local`.
 
-## 3. Cloudinary (photos & videos)
+## 3. Cloudflare R2 (photos & videos)
 
-1. cloudinary.com → sign up. Copy the **Cloud name** into `.env.local`.
-2. **Settings → Upload → Upload presets → Add**: name `her_world_uploads`, Signing mode **Unsigned**, folder `her-world`. Save.
-3. For the media kit PDF: **Settings → Security** → enable **"Allow delivery of PDF and ZIP files"**. (Or just paste a Google Drive link in Site settings.)
+Photos and videos are shrunk in the browser before upload (photos → max 2000px WebP/JPEG, videos → 720p H.264 MP4 with a cover image), then sent straight to R2. R2 has no bandwidth charge, and videos only load when a visitor scrolls near them.
 
-Restart `npm run dev` after editing `.env.local`.
+1. dash.cloudflare.com → **R2** → enable → **Create bucket** `herworld-media`.
+2. Bucket → **Settings → Public access**: connect a **custom domain** such as `media.seenagracejohn.com` (the domain must be on Cloudflare DNS). Or, for testing only, enable the **r2.dev** link.
+3. Bucket → **Settings → CORS policy** → paste:
+   ```json
+   [{ "AllowedOrigins": ["https://seenagracejohn.com", "https://www.seenagracejohn.com", "http://localhost:3000"],
+      "AllowedMethods": ["PUT", "GET"], "AllowedHeaders": ["*"], "MaxAgeSeconds": 3600 }]
+   ```
+4. R2 overview → **Manage API tokens → Create API token**: permission **Object Read & Write**, only this bucket. Copy the Access Key ID, Secret Access Key and your Account ID.
+5. Put them in `.env.local` (and in Vercel → Settings → Environment Variables): `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `NEXT_PUBLIC_MEDIA_URL`.
+
+Old items that still point at the closed Cloudinary account show a branded placeholder on the site and a **Re-upload media** badge in the admin. Open each, remove the old file (×) and upload it again.
 
 ## 4. Use the admin
 
@@ -71,4 +79,4 @@ Vercel's free Hobby plan is for non-commercial use; a paid creator site should u
 ## Security notes
 
 - Only the email in `schema.sql` can write; everyone else can only read published content.
-- The unsigned Cloudinary preset lets anyone who finds its name upload files. Once live, switch it to **Signed** and add a signing route (see next-cloudinary docs: "Signed Uploads").
+- Uploads go through `/api/upload`, which only gives a 15-minute upload link to a signed-in admin. The R2 keys stay on the server.

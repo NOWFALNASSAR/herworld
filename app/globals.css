@@ -216,6 +216,9 @@ th{font-stretch:112%;font-weight:600;font-size:.68rem;letter-spacing:.12em;text-
 .thumbs .t img,.thumbs .t video{width:100%;height:100%;object-fit:cover}
 .thumbs .t .x{position:absolute;top:2px;right:2px;background:#080808;border:0;width:24px;height:24px}
 .thumbs .t .l{position:absolute;bottom:2px;left:2px;background:#080808;border:0;width:24px;height:24px}
+.thumbs .t .old{display:flex;align-items:center;justify-content:center;height:100%;padding:6px;text-align:center;font-size:.68rem;line-height:1.2;color:var(--pink)}
+.status.old{margin-left:8px;border-color:var(--pink);color:var(--pink)}
+.uploader{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 fieldset{border:1px solid var(--line);padding:18px;display:grid;gap:14px;margin:0}
 legend{padding:0 6px;font-stretch:112%;font-weight:700;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
 .msg{padding:10px 14px;border:1px solid var(--pink);font-size:.9rem}

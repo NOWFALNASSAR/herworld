@@ -5,7 +5,7 @@ import Uploader from '@/components/admin/Uploader';
 import { createClient } from '@/lib/supabase/client';
 import { DEFAULT_SETTINGS } from '@/lib/defaults';
 import type { Settings } from '@/lib/types';
-import { cld } from '@/lib/utils';
+import { cld, isOldCloudinary } from '@/lib/utils';
 import { refreshSite } from '../actions';
 
 export default function SettingsPage() {
@@ -37,7 +37,9 @@ export default function SettingsPage() {
       {s[k] && (
         <div className="thumbs" style={{ marginBottom: 8 }}>
           <div className="t">
-            {s[k]!.kind === 'video' ? <video src={cld(s[k]!.url, 'video')} muted /> : <img src={cld(s[k]!.url, 'image', 200)} alt="" />}
+            {isOldCloudinary(s[k]!.url) ? <span className="old">Old file — re-upload</span>
+              : s[k]!.kind === 'video' ? (s[k]!.poster ? <img src={s[k]!.poster} alt="" /> : <video src={s[k]!.url} muted preload="metadata" />)
+              : <img src={cld(s[k]!.url, 'image', 200)} alt="" />}
             <button type="button" className="x" aria-label="Remove" onClick={() => set(k, null)}>×</button>
           </div>
         </div>

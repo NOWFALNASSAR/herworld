@@ -1,5 +1,5 @@
 export type ContentType = 'campaign' | 'photo' | 'reel' | 'video' | 'vlog' | 'pov' | 'bts' | 'acting';
-export type MediaItem = { url: string; kind: 'image' | 'video' };
+export type MediaItem = { url: string; kind: 'image' | 'video'; poster?: string };
 export type Item = {
   id: string;
   type: ContentType;
