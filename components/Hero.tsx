@@ -1,8 +1,9 @@
 import { Fragment } from 'react';
 import type { Settings } from '@/lib/types';
-import { cld, videoPoster } from '@/lib/utils';
+import { cld, isOldCloudinary, videoPoster } from '@/lib/utils';
 
-export default function Hero({ s, exploreHref = '#latest' }: { s: Settings; exploreHref?: string }) {
+export default function Hero({ s: settings, exploreHref = '#latest' }: { s: Settings; exploreHref?: string }) {
+  const s: Settings = isOldCloudinary(settings.hero?.url) ? { ...settings, hero: null } : settings;
   const roles = s.roles.split('•').map((r) => r.trim()).filter(Boolean);
   return (
     <section className="hero" id="top">

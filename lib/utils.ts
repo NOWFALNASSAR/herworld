@@ -1,5 +1,8 @@
 import type { Item, MediaItem } from './types';
 
+/** Old files on the disabled Cloudinary account no longer load; treat them as missing. */
+export const isOldCloudinary = (url?: string | null) => !!url && url.includes('res.cloudinary.com');
+
 /** Adds Cloudinary auto-format/quality/size to an upload URL. */
 export function cld(url: string, kind: 'image' | 'video' = 'image', width = 1400) {
   if (!url.includes('/upload/')) return url;
